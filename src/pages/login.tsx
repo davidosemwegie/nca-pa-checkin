@@ -21,7 +21,10 @@ const LoginPage = () => {
 
   async function signInWithEmail() {
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({
+    const {
+      error,
+      data: { session },
+    } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -30,6 +33,8 @@ const LoginPage = () => {
     if (error) {
       alert(error.message);
     } else {
+      window.localStorage.setItem("session", JSON.stringify(session));
+      console.log("Logged in successfully!");
       push("/");
     }
   }
