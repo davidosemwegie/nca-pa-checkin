@@ -5,6 +5,7 @@ import moment from "moment";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import { useRouter } from "next/router";
 
 enum CHECKIN_STATUS {
   CHECKED_IN = "CHECKED_IN",
@@ -27,6 +28,7 @@ const EventCard: FC<EventCardProps> = ({
 }) => {
   const supabase = useSupabaseClient();
   const session = useSession();
+  const { push } = useRouter();
 
   const [areDetailsVisible, setAreDetailsVisible] = useState(false);
   const [checkinStatus, setCheckinStatus] = useState<any>(null);
@@ -127,7 +129,10 @@ const EventCard: FC<EventCardProps> = ({
     <>
       <div
         className="bg-white my-4 p-4 rounded-md flex justify-between items-center cursor-pointer"
-        onClick={() => setAreDetailsVisible(!areDetailsVisible)}
+        //onClick={() => setAreDetailsVisible(!areDetailsVisible)}
+        onClick={() => {
+          push(`/event/${id}`);
+        }}
       >
         <p className="flex-1">{title}</p>
         <p className="flex-1">
@@ -139,11 +144,13 @@ const EventCard: FC<EventCardProps> = ({
           >
             <p>{statusText}</p>
           </div>
-          {areDetailsVisible ? (
-            <KeyboardArrowUpIcon />
-          ) : (
-            <KeyboardArrowDownIcon />
-          )}
+          <span onClick={() => setAreDetailsVisible(!areDetailsVisible)}>
+            {areDetailsVisible ? (
+              <KeyboardArrowUpIcon />
+            ) : (
+              <KeyboardArrowDownIcon />
+            )}
+          </span>
         </div>
       </div>
 

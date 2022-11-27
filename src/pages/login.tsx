@@ -39,22 +39,6 @@ const LoginPage = () => {
     }
   }
 
-  async function registerWithEmail() {
-    setLoading(true);
-    let { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-
-    console.log({ error });
-
-    if (error) {
-      alert(error.message);
-    } else {
-      alert("Check your email to get a link to verify your email.");
-    }
-  }
-
   return (
     <div className="h-screen flex-row ">
       <form>
@@ -75,7 +59,7 @@ const LoginPage = () => {
         <Button variant="contained" onClick={() => signInWithEmail()}>
           Login
         </Button>
-        <Button variant="contained" onClick={() => registerWithEmail()}>
+        <Button variant="contained" onClick={() => push("/register")}>
           Register
         </Button>
       </form>
