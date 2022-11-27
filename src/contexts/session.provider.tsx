@@ -1,5 +1,6 @@
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { Session } from "@supabase/supabase-js";
+import { useRouter } from "next/router";
 import React, { FC, PropsWithChildren, useEffect, useState } from "react";
 import { useContext } from "react";
 import { createContext } from "react";
@@ -12,21 +13,26 @@ const sessionContext = createContext<SessionContext | null>(null);
 
 const SessionProvider: FC<PropsWithChildren> = ({ children }) => {
   const supabase = useSupabaseClient();
+  const { push } = useRouter();
 
-  const [session, setSession] = useState<Session | null>(null);
+  const [session, setSession] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
+    setTimeout(() => {
+      setSession(window?.localStorage.getItem("session"));
+    }, 500);
   }, []);
 
-  const value: SessionContext = {
-    session,
+  useEffect(() => {
+    if (!session) {
+      push("/login");
+    } else {
+      push("/");
+    }
+  }, [session]);
+
+  const value: any = {
+    session: supabase.auth.getSession(),
   };
 
   return (
