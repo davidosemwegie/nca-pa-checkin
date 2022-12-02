@@ -1,8 +1,15 @@
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useEffect, useState } from "react";
-import { Event } from "../../types";
+import { Checkin, Event } from "../../types";
 
-export interface UseGetInterfaceData extends Event {}
+export interface UseGetInterfaceData {
+  id: string;
+  created_at: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  checkin: Omit<Checkin, "id">[];
+}
 
 const useGetEventDetails = (id: string) => {
   const supabase = useSupabaseClient();

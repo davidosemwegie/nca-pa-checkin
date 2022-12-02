@@ -140,6 +140,7 @@ const EventCard: FC<EventCardProps> = ({
         </p>
         <div className="flex items-center justify-end flex-1">
           <div
+            onClick={() => setAreDetailsVisible(!areDetailsVisible)}
             className={`bg-gray-400 font-bold text-white p-4 rounded-md mr-4`}
           >
             <p>{statusText}</p>
@@ -158,7 +159,6 @@ const EventCard: FC<EventCardProps> = ({
         <div className="flex justify-between gap-4">
           <div className="flex-1 bg-white p-4 rounded-md">
             <p className="whitespace-pre-wrap">{description}</p>
-            {/* <pre>{JSON.stringify({ checkinStatus, checkin }, null, 2)}</pre> */}
           </div>
           <div className="flex flex-col">
             <button
