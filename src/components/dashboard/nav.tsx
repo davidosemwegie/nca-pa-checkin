@@ -1,11 +1,11 @@
 import React from "react";
-import Button from "@mui/material/Button";
 import { useRouter } from "next/router";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useGetUser } from "../../lib/events/use-get-user";
+import { Greeting } from "./greeting";
 
 const Nav = () => {
-  const { push } = useRouter();
+  const { push, pathname } = useRouter();
   const session = useSupabaseClient();
   const { isAdmin } = useGetUser();
 
@@ -16,16 +16,19 @@ const Nav = () => {
   };
 
   return (
-    <nav className="h-16  flex justify-between items-center">
-      <h1 className="text-3xl font-bold">Prayer Checkin App</h1>
-      <div className="flex gap-4">
+    <nav>
+      <Greeting />
+      <div className="nav-button-group flex gap-4">
         {session ? (
           <>
             {isAdmin && (
               <>
-                <button onClick={() => push("/")}>
-                  View all prayer events
-                </button>
+                {pathname !== "/" && (
+                  <button onClick={() => push("/")}>
+                    View all prayer events
+                  </button>
+                )}
+
                 <button onClick={() => push("/create")}>
                   Create new event
                 </button>

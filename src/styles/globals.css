@@ -5,8 +5,9 @@
 .html,
 body {
   background-color: #eceff1;
-  height: 100vh;
-  padding: 24px;
+  height: 100%;
+  margin: auto;
+  max-width: 960px;
 }
 
 button,
@@ -14,9 +15,61 @@ button[type="submit"] {
   @apply bg-purple-900 text-white font-semibold py-2 px-4 rounded;
 }
 
+.checkin-status {
+  @apply py-1 px-3 rounded-md font-semibold text-white;
+}
+
+nav {
+  @apply h-16 flex justify-between items-center;
+}
+
+.event-card-row {
+  @apply flex flex-wrap justify-center;
+}
+
 @media only screen and (max-width: 640px) {
   .html,
   body {
-    margin: 16px;
+    @apply m-4;
+  }
+
+  main {
+    @apply mb-10;
+  }
+
+  /* NAV */
+  nav {
+    @apply h-auto block;
+  }
+
+  .nav-button-group {
+    @apply flex flex-col mt-4;
+  }
+
+  /* EVENT CARD */
+
+  .event-card-text {
+    /* @apply text-base; */
+  }
+
+  .event-card {
+    @apply flex flex-col;
+  }
+
+  .event-details-container {
+    @apply flex flex-col-reverse;
+  }
+
+  .event-action-button-container {
+    @apply flex-row justify-between gap-4;
+  }
+
+  .event-action-button {
+    @apply m-0 w-full;
+  }
+
+  /* DASHBOARD */
+  .dashboard-container {
+    @apply mb-10;
   }
 }

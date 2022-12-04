@@ -38,6 +38,7 @@ const useGetUser = () => {
     error,
     loading,
     isAdmin: data?.role === "ADMIN",
+    firstName: data?.first_name,
   };
 };
 

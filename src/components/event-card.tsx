@@ -132,7 +132,7 @@ const EventCard: FC<EventCardProps> = ({
   return (
     <>
       <div
-        className="bg-white my-4 p-4 rounded-md flex justify-between items-center cursor-pointer"
+        className="event-card bg-white my-4 p-4 rounded-md cursor-pointer"
         onClick={() => {
           if (isAdmin) {
             push(`/event/${id}`);
@@ -141,58 +141,72 @@ const EventCard: FC<EventCardProps> = ({
           }
         }}
       >
-        <p className="flex-1">{title}</p>
-        <p className="flex-1">
-          {moment(active_date_time).format("ddd Do, MMM yyyy")}
-        </p>
-        <p className="flex-1">
-          {" "}
-          Start Time: {moment(active_date_time).format("HH:MM a")}
-        </p>
-        <div className="flex items-center justify-end flex-1">
-          {isAdmin ? (
-            <div className="flex">
-              <p>{active ? "Live" : "Not Live"}</p>
-            </div>
-          ) : (
-            <button
-              onClick={() => setAreDetailsVisible(!areDetailsVisible)}
-              className={`bg-gray-400 font-bold text-white mr-4`}
-            >
-              {statusText}
-            </button>
-          )}
+        <div className="event-card-row mb-4">
+          <p className="event-card-text font-bold text-lg flex-1">{title}</p>
+          <div className="flex items-center justify-end flex-1">
+            {isAdmin ? (
+              <div className="event-card-text flex">
+                <p
+                  className={`py-1 px-3 rounded-md font-semibold text-white ${
+                    active ? "bg-green-700" : "bg-red-700"
+                  }`}
+                >
+                  {active ? "Live" : "Not Live"}
+                </p>
+              </div>
+            ) : (
+              <button
+                onClick={() => setAreDetailsVisible(!areDetailsVisible)}
+                className={`bg-gray-400 font-bold checkin-status`}
+              >
+                {statusText}
+              </button>
+            )}
 
-          {!isAdmin && (
-            <span onClick={() => setAreDetailsVisible(!areDetailsVisible)}>
-              {areDetailsVisible ? (
-                <KeyboardArrowUpIcon />
-              ) : (
-                <KeyboardArrowDownIcon />
-              )}
-            </span>
-          )}
+            {/* {!isAdmin && (
+              <span onClick={() => setAreDetailsVisible(!areDetailsVisible)}>
+                {areDetailsVisible ? (
+                  <KeyboardArrowUpIcon />
+                ) : (
+                  <KeyboardArrowDownIcon />
+                )}
+              </span>
+            )} */}
+          </div>
+        </div>
+        <div className="event-card-row">
+          <p className="event-card-text flex-1">
+            {moment(active_date_time).format("ddd Do, MMM yyyy")}
+          </p>
+          <p className=" event-card-textflex-1">
+            {moment(active_date_time).format("HH:MM a")}
+          </p>
         </div>
       </div>
 
       {areDetailsVisible && (
-        <div className="flex justify-between gap-4">
+        <div className="event-details-container flex justify-between gap-4">
           <div className="flex-1 bg-white p-4 rounded-md">
-            <p className="whitespace-pre-wrap">{description}</p>
+            <span className="whitespace-pre-wrap">
+              <p className="text-lg font-bold">Prayer Points / Description</p>
+              <p>{description}</p>
+            </span>
           </div>
-          <div className="flex flex-col">
+          <div className="event-action-button-container flex flex-col">
             <button
-              className={`mb-4 ${isCheckedIn ? "bg-gray-400" : "bg-green-500"}`}
+              className={`event-action-button mb-4 ${
+                isCheckedIn ? "bg-gray-400" : "bg-green-700"
+              }`}
               disabled={isCheckedIn}
               onClick={checkIn}
             >
               Check In
             </button>
             <button
-              className={`${
+              className={`event-action-button ${
                 checkinStatus === CHECKIN_STATUS.CHECKED_OUT
                   ? "bg-gray-400"
-                  : "bg-red-500"
+                  : "bg-red-700"
               }`}
               disabled={isCheckedOut}
               onClick={checkOut}

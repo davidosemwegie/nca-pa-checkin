@@ -1715,6 +1715,11 @@ grapheme-splitter@^1.0.4:
   resolved "https://registry.yarnpkg.com/grapheme-splitter/-/grapheme-splitter-1.0.4.tgz#9cf3a665c6247479896834af35cf1dbb4400767e"
   integrity sha512-bzh50DW9kTPM00T8y4o8vQg89Di9oLJVLW/KaOGIXJWP/iqCN6WKYkbNOF04vFLJhwcpYUh9ydh/+5vpOqV4YQ==
 
+greeting-time@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/greeting-time/-/greeting-time-1.0.0.tgz#2c677ff67b830bda57ddeaf40be4e8a2c9db8af2"
+  integrity sha512-SjefO4MuSaL1xvFtxMZKnoROsh/t8s3UaWjNfsRA7IvD2o7picqySgYk7NAZmhEaCieQhXsrbjfP33aGRADxbg==
+
 has-bigints@^1.0.1, has-bigints@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/has-bigints/-/has-bigints-1.0.2.tgz#0871bd3e3d51626f6ca0966668ba35d5602d6eaa"

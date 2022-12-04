@@ -21,26 +21,23 @@ const Dashboard = () => {
     );
 
   return (
-    <div>
-      <Nav />
-      <div>
-        <div className="mb-4">
-          <h1 className="text-2xl font-bold">Prayer Alerts</h1>
-          {data
-            ?.filter((value) => value.type === EventType.PRAYER_ALERT)
-            .map((item) => (
-              <EventCard key={item.id} refetch={refetch} {...item} />
-            ))}
-        </div>
+    <div className="dashboard-container my-4">
+      <div className="mb-4">
+        <h1 className="text-2xl font-bold">Prayer Alerts</h1>
+        {data
+          ?.filter((value) => value.type === EventType.PRAYER_ALERT)
+          .map((item) => (
+            <EventCard key={item.id} refetch={refetch} {...item} />
+          ))}
+      </div>
 
-        <div>
-          <h1 className="text-2xl font-bold">Daily Prayers</h1>
-          {data
-            ?.filter((value) => value.type === EventType.DAILY)
-            .map((item) => (
-              <EventCard key={item.id} refetch={refetch} {...item} />
-            ))}
-        </div>
+      <div>
+        <h1 className="text-2xl font-bold">Daily Prayers</h1>
+        {data
+          ?.filter((value) => value.type === EventType.DAILY)
+          .map((item) => (
+            <EventCard key={item.id} refetch={refetch} {...item} />
+          ))}
       </div>
     </div>
   );
