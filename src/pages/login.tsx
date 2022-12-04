@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import TextField from "@mui/material/TextField";
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
-import { useForm, SubmitHandler } from "react-hook-form";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
+import Link from "next/link";
+import { TextField } from "@mui/material";
 
 type Inputs = {
   email: string;
@@ -34,35 +32,45 @@ const LoginPage = () => {
       alert(error.message);
     } else {
       window.localStorage.setItem("session", JSON.stringify(session));
-      console.log("Logged in successfully!");
       push("/");
     }
   }
 
   return (
-    <div className="h-screen flex-row ">
-      <form>
-        <Stack spacing={2} direction="row">
+    <div className="h-screen flex flex-col m-auto max-w-md mt-20">
+      <div>
+        <h1 className="text-3xl font-extrabold text-center">
+          NCA Prayer Academy Checkin
+        </h1>
+        <p className="my-4 text-gray-500">
+          Please login or create an account if you don&rsquo;t have one
+        </p>
+        <form className="flex flex-col max-w-4xl gap-4">
           <TextField
             id="outlined-basic"
-            variant="outlined"
             onChange={(e) => setEmail(e.target.value)}
             value={email}
+            placeholder="Email"
           />
           <TextField
             id="outlined-basic"
-            variant="outlined"
             onChange={(e) => setPassword(e.target.value)}
             value={password}
+            placeholder="Password"
+            type="password"
           />
-        </Stack>
-        <Button variant="contained" onClick={() => signInWithEmail()}>
-          Login
-        </Button>
-        <Button variant="contained" onClick={() => push("/register")}>
-          Register
-        </Button>
-      </form>
+          <button className=" bg-purple-600" onClick={() => signInWithEmail()}>
+            {loading ? "Loading..." : "Login"}
+          </button>
+
+          <Link
+            href="/register"
+            className="bg-purple-900 text-white font-semibold py-2 px-4 rounded text-center"
+          >
+            Create account
+          </Link>
+        </form>
+      </div>
     </div>
   );
 };

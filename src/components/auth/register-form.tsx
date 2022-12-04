@@ -1,6 +1,6 @@
 import { TextField } from "@mui/material";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { data } from "autoprefixer";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -8,6 +8,7 @@ const RegisterForm = () => {
   const { handleSubmit, register } = useForm();
   const [loading, setLoading] = useState(false);
   const supabase = useSupabaseClient();
+  const { push } = useRouter();
 
   async function registerWithEmail(args: any) {
     const { email, password, first_name, last_name } = args;
@@ -16,8 +17,6 @@ const RegisterForm = () => {
       email,
       password,
     });
-
-    console.log({ data });
 
     if (data) {
       const { error } = await supabase
@@ -33,16 +32,14 @@ const RegisterForm = () => {
       alert(registerError?.message);
     } else {
       alert("Check your email to get a link to verify your email.");
+      push("/login");
     }
   }
 
-  const onSubmit = (data: any) => {
-    console.log(data);
-  };
-
   return (
     <div>
-      <h1 className="font-black text-3xl mb-4">Register</h1>
+      <h1 className="text-4xl font-extrabold mb-4">Register</h1>
+
       <form
         onSubmit={handleSubmit(registerWithEmail)}
         className="flex flex-col max-w-4xl gap-4"
@@ -60,7 +57,10 @@ const RegisterForm = () => {
           label="Password"
           {...register("password", { required: true })}
         />
-        <button type="submit">Submit</button>
+
+        <button type="submit">
+          {loading ? "Loading..." : "Create account"}
+        </button>
       </form>
     </div>
   );

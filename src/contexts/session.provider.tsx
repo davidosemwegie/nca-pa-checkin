@@ -13,7 +13,7 @@ const sessionContext = createContext<SessionContext | null>(null);
 
 const SessionProvider: FC<PropsWithChildren> = ({ children }) => {
   const supabase = useSupabaseClient();
-  const { push } = useRouter();
+  const { push, pathname } = useRouter();
 
   const [session, setSession] = useState<string | null>(null);
 
@@ -24,12 +24,15 @@ const SessionProvider: FC<PropsWithChildren> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (!session) {
+    // redirect the user to the login page if they are not logged in except for the register page
+    if (!session && pathname !== "/register") {
       push("/login");
-    } else {
+    } else if (session && pathname === "/login") {
+      push("/");
+    } else if (session && pathname === "/register") {
       push("/");
     }
-  }, [session]);
+  }, [session, pathname]);
 
   const value: any = {
     session: supabase.auth.getSession(),
