@@ -22,12 +22,13 @@ const CreateForm = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: any) => {
     if (data.title !== "" || data.description !== "") {
       const body = {
         ...data,
         active: true,
-        active_date_time: new Date(active_date_time?.["$d"]),
+        // @ts-ignore
+        active_date_time: new Date(active_date_time?.["$d"] as any),
       };
       setLoading(true);
 

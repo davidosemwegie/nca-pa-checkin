@@ -6,6 +6,7 @@ import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useRouter } from "next/router";
+import { useGetUser } from "../lib/events/use-get-user";
 
 enum CHECKIN_STATUS {
   CHECKED_IN = "CHECKED_IN",
@@ -29,6 +30,7 @@ const EventCard: FC<EventCardProps> = ({
   const supabase = useSupabaseClient();
   const session = useSession();
   const { push } = useRouter();
+  const { isAdmin } = useGetUser();
 
   const [areDetailsVisible, setAreDetailsVisible] = useState(false);
   const [checkinStatus, setCheckinStatus] = useState<any>(null);
@@ -129,9 +131,12 @@ const EventCard: FC<EventCardProps> = ({
     <>
       <div
         className="bg-white my-4 p-4 rounded-md flex justify-between items-center cursor-pointer"
-        //onClick={() => setAreDetailsVisible(!areDetailsVisible)}
         onClick={() => {
-          push(`/event/${id}`);
+          if (isAdmin) {
+            push(`/event/${id}`);
+          } else {
+            setAreDetailsVisible(!areDetailsVisible);
+          }
         }}
       >
         <p className="flex-1">{title}</p>

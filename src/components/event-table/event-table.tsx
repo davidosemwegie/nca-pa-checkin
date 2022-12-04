@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import { useGetEventDetails } from "../../lib/events/use-get-event-details";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -8,16 +8,32 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import moment from "moment";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs, { Dayjs } from "dayjs";
+import { TextField } from "@mui/material";
+import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
+import { EventType } from "../../types";
 
 export interface EventTableProps {
   id: string;
 }
 
 const EventTable: FC<EventTableProps> = ({ id }) => {
-  const { data, error, loading, refetch } = useGetEventDetails(id);
+  const { data, error, loading, refetch, dailyEvents, eventName } =
+    useGetEventDetails(id);
+  const [active_date_time, setActiveDateTime] = useState<Dayjs | null>(
+    dayjs(new Date())
+  );
+  const isDailyEvent = dailyEvents?.includes(id || "");
 
   const formatDate = (date: string) => {
     return moment(date).format("YYYY/MM/DD hh:mm:ss");
+  };
+
+  const formatDateForFilter = (date: string) => {
+    return moment(date).format("YYYY/MM/DD");
   };
 
   if (loading) return <div>Loading...</div>;
@@ -26,8 +42,34 @@ const EventTable: FC<EventTableProps> = ({ id }) => {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-4">Event Table</h1>
-      {/* <pre>{JSON.stringify({ data }, null, 2)}</pre> */}
+      <div className="flex justify-between my-4">
+        <h1 className="text-3xl font-bold mb-4">{eventName}</h1>
+        {isDailyEvent && (
+          <div className="formSection">
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <MobileDatePicker
+                renderInput={(props) => <TextField {...props} />}
+                label="Selected Date"
+                value={active_date_time}
+                onChange={(newValue) => {
+                  // @ts-ignore
+                  setActiveDateTime(newValue?.["$d"]);
+                }}
+              />
+            </LocalizationProvider>
+          </div>
+        )}
+      </div>
+      {/* <pre>
+        {JSON.stringify(
+          {
+            data,
+            dailyEvents,
+          },
+          null,
+          2
+        )}
+      </pre> */}
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -43,8 +85,31 @@ const EventTable: FC<EventTableProps> = ({ id }) => {
           <TableBody>
             {data &&
               data.map((row) => {
-                const hasCheckinTime = row.checkin?.[0]?.checkin_time;
-                const hasCheckoutTime = row.checkin?.[0]?.checkout_time;
+                //Filter out the checkin data that is not within the active date time
+                const filteredCheckinData = row?.checkin.filter((checkin) => {
+                  const hasCheckinDate = !!checkin?.checkin_time;
+
+                  if (hasCheckinDate) {
+                    const checkinDate = formatDateForFilter(
+                      checkin?.checkin_time as string
+                    );
+
+                    // @ts-ignore
+                    const activeDate = formatDateForFilter(active_date_time);
+
+                    return checkinDate === activeDate;
+                  }
+
+                  return false;
+                })[0];
+
+                const checkinData = isDailyEvent
+                  ? filteredCheckinData
+                  : row?.checkin[0];
+
+                const hasCheckinTime = checkinData?.checkin_time;
+                const hasCheckoutTime = checkinData?.checkout_time;
+
                 return (
                   <TableRow
                     key={row.id}
@@ -57,18 +122,18 @@ const EventTable: FC<EventTableProps> = ({ id }) => {
                     <TableCell align="right">{row.email}</TableCell>
                     <TableCell align="right">
                       {hasCheckinTime
-                        ? formatDate(row.checkin[0]?.checkin_time as string)
+                        ? formatDate(checkinData?.checkin_time as string)
                         : "N/A"}
                     </TableCell>
                     <TableCell align="right">
                       {hasCheckoutTime
-                        ? formatDate(row.checkin[0]?.checkout_time as string)
+                        ? formatDate(checkinData?.checkout_time as string)
                         : "N/A"}
                     </TableCell>
                     <TableCell align="right">
                       {hasCheckinTime && hasCheckoutTime
-                        ? `${moment(row.checkin[0]?.checkout_time).diff(
-                            row.checkin[0]?.checkin_time,
+                        ? `${moment(checkinData?.checkout_time).diff(
+                            checkinData?.checkin_time,
                             "minutes"
                           )} minutes`
                         : hasCheckinTime && !hasCheckoutTime

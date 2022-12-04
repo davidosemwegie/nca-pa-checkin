@@ -13,6 +13,10 @@ export interface Checkin {
   id: string;
   checkin_time?: string;
   checkout_time?: string;
+  event_id: string;
+  events?: {
+    type: EventType;
+  };
 }
 
 export enum EventType {
