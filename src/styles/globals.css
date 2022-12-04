@@ -15,6 +15,10 @@ button[type="submit"] {
   @apply bg-purple-900 text-white font-semibold py-2 px-4 rounded;
 }
 
+button[type="submit"] {
+  @apply w-full;
+}
+
 /* INPUT */
 input {
   @apply h-10 p-4 mb-4 w-full rounded-md outline-1;
@@ -30,6 +34,14 @@ nav {
 
 .event-card-row {
   @apply flex flex-wrap justify-center;
+}
+
+.formSection {
+  @apply mb-4;
+}
+
+.formSection > p {
+  @apply mb-2;
 }
 
 @media only screen and (max-width: 640px) {

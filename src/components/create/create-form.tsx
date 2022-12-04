@@ -11,6 +11,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import Switch from "react-switch";
 
 const CreateForm = () => {
   const supabase = useSupabaseClient();
@@ -19,6 +20,7 @@ const CreateForm = () => {
   const [active_date_time, setActiveDateTime] = useState<Dayjs | null>(
     dayjs(new Date())
   );
+  const [active, setActive] = useState<boolean>(false);
 
   const [loading, setLoading] = useState(false);
 
@@ -26,7 +28,7 @@ const CreateForm = () => {
     if (data.title !== "" || data.description !== "") {
       const body = {
         ...data,
-        active: true,
+        active,
         // @ts-ignore
         active_date_time: new Date(active_date_time?.["$d"] as any),
       };
@@ -46,69 +48,86 @@ const CreateForm = () => {
   };
 
   return (
-    <div>
-      <h1>Create new event</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col ">
-        <FormControl>
-          <div className="formSection">
-            <p className="formTitle">Prayer Type</p>
-            <RadioGroup row {...register("type")}>
-              <FormControlLabel
-                value={EventType.PRAYER_ALERT}
-                control={<Radio />}
-                label="Prayer Alert"
+    <div className="mt-4">
+      <div className="flex flex-col w-full">
+        <h1 className="font-extrabold text-3xl mb-4">Create new event</h1>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col ">
+          <FormControl>
+            <div className="formSection">
+              <p className="formTitle">Prayer Type</p>
+              <RadioGroup row {...register("type")}>
+                <FormControlLabel
+                  value={EventType.PRAYER_ALERT}
+                  control={<Radio />}
+                  label="Prayer Alert"
+                />
+                <FormControlLabel
+                  value={EventType.DAILY}
+                  control={<Radio />}
+                  label="Daily Prayer"
+                />
+              </RadioGroup>
+            </div>
+            <div className="formSection">
+              <div className="flex">
+                <p className="mr-4">Activate right now ? </p>
+                <Switch checked={active} onChange={setActive} />
+                <p className="font-bold mx-4">{active ? "Yes" : "No"}</p>
+                <p>
+                  {active
+                    ? "(other people can see this event)"
+                    : " (no one will see this until you activate it)"}
+                </p>
+              </div>
+            </div>
+            <div className="formSection">
+              <p className="formTitle">Title</p>
+              <TextField
+                id="outlined-basic"
+                label="Outlined"
+                variant="outlined"
+                {...register("title")}
+                className="w-full"
               />
-              <FormControlLabel
-                value={EventType.DAILY}
-                control={<Radio />}
-                label="Daily Prayer"
+            </div>
+            <div className="formSection">
+              <p className="formTitle">Description</p>
+              <TextField
+                id="outlined-multiline-static"
+                multiline
+                rows={4}
+                placeholder="Prayer Points"
+                variant="outlined"
+                {...register("description")}
+                className="w-full"
               />
-            </RadioGroup>
+            </div>
+            <div className="formSection">
+              <p className="formTitle">Active Date Time</p>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DateTimePicker
+                  renderInput={(props) => <TextField {...props} />}
+                  label="DateTimePicker"
+                  value={active_date_time}
+                  onChange={(newValue) => {
+                    setActiveDateTime(newValue);
+                  }}
+                  className="w-full"
+                />
+              </LocalizationProvider>
+            </div>
+          </FormControl>
+          <div>
+            {loading ? (
+              <p>Loading...</p>
+            ) : (
+              <button type="submit" className="text-black">
+                Submit
+              </button>
+            )}
           </div>
-          <div className="formSection">
-            <p className="formTitle">Title</p>
-            <TextField
-              id="outlined-basic"
-              label="Outlined"
-              variant="outlined"
-              {...register("title")}
-            />
-          </div>
-          <div className="formSection">
-            <p className="formTitle">Description</p>
-            <TextField
-              id="outlined-multiline-static"
-              multiline
-              rows={4}
-              placeholder="Prayer Points"
-              variant="outlined"
-              {...register("description")}
-            />
-          </div>
-          <div className="formSection">
-            <p className="formTitle">Active Date Time</p>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DateTimePicker
-                renderInput={(props) => <TextField {...props} />}
-                label="DateTimePicker"
-                value={active_date_time}
-                onChange={(newValue) => {
-                  setActiveDateTime(newValue);
-                }}
-              />
-            </LocalizationProvider>
-          </div>
-        </FormControl>
-        <div>
-          {loading ? (
-            <p>Loading...</p>
-          ) : (
-            <button type="submit" className="text-black">
-              Submit
-            </button>
-          )}
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 };
