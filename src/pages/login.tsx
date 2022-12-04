@@ -4,14 +4,9 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { TextField } from "@mui/material";
 
-type Inputs = {
-  email: string;
-  password: string;
-};
-
 const LoginPage = () => {
   const supabase = useSupabaseClient();
-  const { push } = useRouter();
+  const router = useRouter();
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -31,8 +26,9 @@ const LoginPage = () => {
     if (error) {
       alert(error.message);
     } else {
+      console.log("Logged in");
       window.localStorage.setItem("session", JSON.stringify(session));
-      push("/");
+      router.push("/");
     }
   }
 
@@ -45,7 +41,7 @@ const LoginPage = () => {
         <p className="my-4 text-gray-500">
           Please login or create an account if you don&rsquo;t have one
         </p>
-        <form className="flex flex-col max-w-4xl gap-4">
+        <div className="flex flex-col max-w-4xl gap-4">
           <TextField
             id="outlined-basic"
             onChange={(e) => setEmail(e.target.value)}
@@ -59,7 +55,7 @@ const LoginPage = () => {
             placeholder="Password"
             type="password"
           />
-          <button className=" bg-purple-600" onClick={() => signInWithEmail()}>
+          <button className="bg-purple-600" onClick={signInWithEmail}>
             {loading ? "Loading..." : "Login"}
           </button>
 
@@ -69,7 +65,7 @@ const LoginPage = () => {
           >
             Create account
           </Link>
-        </form>
+        </div>
       </div>
     </div>
   );
