@@ -25,14 +25,20 @@ const SessionProvider: FC<PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     // redirect the user to the login page if they are not logged in except for the register page
-    if (!session && pathname !== "/register") {
+    // if (!session && pathname !== "/register") {
+    //   push("/login");
+    // } else if (session && pathname === "/login") {
+    //   push("/");
+    // } else if (session && pathname === "/register") {
+    //   push("/");
+    // }
+
+    if (session) {
+      push("/");
+    } else {
       push("/login");
-    } else if (session && pathname === "/login") {
-      push("/");
-    } else if (session && pathname === "/register") {
-      push("/");
     }
-  }, [session, pathname]);
+  }, [session]);
 
   const value: any = {
     session: supabase.auth.getSession(),
