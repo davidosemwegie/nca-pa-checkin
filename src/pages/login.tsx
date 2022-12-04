@@ -15,8 +15,8 @@ const LoginPage = () => {
   const supabase = useSupabaseClient();
   const { push } = useRouter();
 
-  const [email, setEmail] = useState<string>("dosemwegie@gmail.com");
-  const [password, setPassword] = useState<string>("password");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
   async function signInWithEmail() {
