@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { useGetEventDetails } from "../../lib/events/use-get-event-details";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -15,17 +15,35 @@ import dayjs, { Dayjs } from "dayjs";
 import { TextField } from "@mui/material";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import { EventType } from "../../types";
+import Switch from "react-switch";
+import { useSupabaseClient } from "@supabase/auth-helpers-react";
 
 export interface EventTableProps {
   id: string;
 }
 
 const EventTable: FC<EventTableProps> = ({ id }) => {
-  const { data, error, loading, refetch, dailyEvents, eventName } =
-    useGetEventDetails(id);
+  const supabase = useSupabaseClient();
+  const {
+    data,
+    error,
+    loading,
+    refetch,
+    dailyEvents,
+    eventName,
+    activeEvents,
+  } = useGetEventDetails(id);
   const [active_date_time, setActiveDateTime] = useState<Dayjs | null>(
     dayjs(new Date())
   );
+  const [isActive, setIsActive] = useState<boolean>(
+    activeEvents?.includes(id) || false
+  );
+
+  useEffect(() => {
+    setIsActive(activeEvents?.includes(id) || false);
+  }, [activeEvents]);
+
   const isDailyEvent = dailyEvents?.includes(id || "");
 
   const formatDate = (date: string) => {
@@ -43,7 +61,24 @@ const EventTable: FC<EventTableProps> = ({ id }) => {
   return (
     <div>
       <div className="flex justify-between my-4">
-        <h1 className="text-3xl font-bold mb-4">{eventName}</h1>
+        <div>
+          <h1 className="text-3xl font-bold mb-4">{eventName}</h1>
+          <div className="flex">
+            <p className="mr-4">Active </p>
+            <Switch
+              checked={isActive}
+              onChange={(checked) => {
+                setIsActive(checked);
+                // Update the supabase event to be active or not
+                supabase
+                  .from("events")
+                  .update({ active: checked })
+                  .eq("id", id)
+                  .then(() => refetch(id));
+              }}
+            />
+          </div>
+        </div>
         {isDailyEvent && (
           <div className="formSection">
             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -63,8 +98,7 @@ const EventTable: FC<EventTableProps> = ({ id }) => {
       {/* <pre>
         {JSON.stringify(
           {
-            data,
-            dailyEvents,
+            activeEvents,
           },
           null,
           2

@@ -9,12 +9,9 @@ body {
   padding: 24px;
 }
 
-button {
-  @apply bg-purple-700 text-white font-bold py-2 px-4 rounded;
-}
-
-.submitButton {
-  @apply bg-teal-700 text-white font-bold py-2 px-4 rounded;
+button,
+button[type="submit"] {
+  @apply bg-purple-900 text-white font-semibold py-2 px-4 rounded;
 }
 
 @media only screen and (max-width: 640px) {

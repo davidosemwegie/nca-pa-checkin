@@ -7,6 +7,7 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useRouter } from "next/router";
 import { useGetUser } from "../lib/events/use-get-user";
+import Switch from "react-switch";
 
 enum CHECKIN_STATUS {
   CHECKED_IN = "CHECKED_IN",
@@ -25,6 +26,7 @@ const EventCard: FC<EventCardProps> = ({
   active_date_time,
   description,
   id,
+  active,
   refetch,
 }) => {
   const supabase = useSupabaseClient();
@@ -141,22 +143,35 @@ const EventCard: FC<EventCardProps> = ({
       >
         <p className="flex-1">{title}</p>
         <p className="flex-1">
+          {moment(active_date_time).format("ddd Do, MMM yyyy")}
+        </p>
+        <p className="flex-1">
+          {" "}
           Start Time: {moment(active_date_time).format("HH:MM a")}
         </p>
         <div className="flex items-center justify-end flex-1">
-          <div
-            onClick={() => setAreDetailsVisible(!areDetailsVisible)}
-            className={`bg-gray-400 font-bold text-white p-4 rounded-md mr-4`}
-          >
-            <p>{statusText}</p>
-          </div>
-          <span onClick={() => setAreDetailsVisible(!areDetailsVisible)}>
-            {areDetailsVisible ? (
-              <KeyboardArrowUpIcon />
-            ) : (
-              <KeyboardArrowDownIcon />
-            )}
-          </span>
+          {isAdmin ? (
+            <div className="flex">
+              <p>{active ? "Live" : "Not Live"}</p>
+            </div>
+          ) : (
+            <button
+              onClick={() => setAreDetailsVisible(!areDetailsVisible)}
+              className={`bg-gray-400 font-bold text-white mr-4`}
+            >
+              {statusText}
+            </button>
+          )}
+
+          {!isAdmin && (
+            <span onClick={() => setAreDetailsVisible(!areDetailsVisible)}>
+              {areDetailsVisible ? (
+                <KeyboardArrowUpIcon />
+              ) : (
+                <KeyboardArrowDownIcon />
+              )}
+            </span>
+          )}
         </div>
       </div>
 

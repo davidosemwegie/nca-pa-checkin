@@ -18,6 +18,7 @@ const useGetEventDetails = (id: string) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [dailyEvents, setDailyEvents] = useState<string[]>();
   const [eventName, setEventName] = useState<string>();
+  const [activeEvents, setActiveEvents] = useState<string[]>();
 
   const session = useSession();
 
@@ -48,6 +49,9 @@ const useGetEventDetails = (id: string) => {
           ?.filter((event) => event.type === EventType.DAILY)
           .map((event) => event.id)
       );
+      setActiveEvents(() =>
+        data?.filter((event) => event.active === true).map((event) => event.id)
+      );
       setEventName(() => data?.find((event) => event.id === id)?.title);
     }
     if (error) setError(error);
@@ -65,6 +69,7 @@ const useGetEventDetails = (id: string) => {
     refetch: getData,
     dailyEvents,
     eventName,
+    activeEvents,
   };
 };
 

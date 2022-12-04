@@ -60,9 +60,7 @@ const RegisterForm = () => {
           label="Password"
           {...register("password", { required: true })}
         />
-        <button className="submitButton" type="submit">
-          Submit
-        </button>
+        <button type="submit">Submit</button>
       </form>
     </div>
   );
