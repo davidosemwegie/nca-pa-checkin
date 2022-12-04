@@ -6,13 +6,13 @@ import { TextField } from "@mui/material";
 
 const LoginPage = () => {
   const supabase = useSupabaseClient();
-  const router = useRouter();
+  const { push } = useRouter();
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
-  async function signInWithEmail() {
+  const signInWithEmail = async () => {
     setLoading(true);
     const {
       error,
@@ -26,11 +26,10 @@ const LoginPage = () => {
     if (error) {
       alert(error.message);
     } else {
-      console.log("Logged in");
       window.localStorage.setItem("session", JSON.stringify(session));
-      router.push("/");
+      push("/");
     }
-  }
+  };
 
   return (
     <div className="h-screen flex flex-col m-auto max-w-md mt-20">
