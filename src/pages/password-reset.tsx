@@ -47,12 +47,13 @@ const PasswordResetPage = () => {
     <div className="h-screen flex flex-col m-auto max-w-md mt-20">
       <div>
         <h1 className="text-3xl font-extrabold text-center">Password Reset</h1>
+        <p className="my-4 text-gray-500">Enter a new password</p>
         <div className="flex flex-col max-w-4xl gap-4 my-4">
           <TextField
             id="outlined-basic"
             onChange={(e) => setPassword(e.target.value)}
             value={password}
-            placeholder="Email"
+            placeholder="New Password"
           />
           <button onClick={resetPassword}>Reset Password</button>
         </div>
