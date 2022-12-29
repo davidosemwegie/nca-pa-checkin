@@ -41,7 +41,7 @@ const LoginPage = () => {
       .resetPasswordForEmail(email, {
         redirectTo: "https://nca-pa-checkin-app.vercel.app/password-reset",
       })
-      .then(() => alert("Check your email"))
+      .then(() => alert("Check your email. Might be in spam folder."))
       .catch(() => {
         alert("Something went wrong");
       });

@@ -31,7 +31,7 @@ const RegisterForm = () => {
     if (registerError) {
       alert(registerError?.message);
     } else {
-      alert("Check your email to get a link to verify your email.");
+      alert("Account created! Try logging in with your email and password");
       push("/login");
     }
   }
