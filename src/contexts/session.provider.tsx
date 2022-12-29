@@ -19,25 +19,19 @@ const SessionProvider: FC<PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     setTimeout(() => {
-      setSession(window?.localStorage.getItem("session"));
+      setSession(window?.localStorage.getItem("access_token"));
     }, 500);
   }, []);
 
   useEffect(() => {
-    // redirect the user to the login page if they are not logged in except for the register page
-    // if (!session && pathname !== "/register") {
-    //   push("/login");
-    // } else if (session && pathname === "/login") {
-    //   push("/");
-    // } else if (session && pathname === "/register") {
-    //   push("/");
-    // }
-
-    if (session) {
-      push("/");
-    } else {
-      push("/login");
+    if (pathname !== "/password-reset") {
+      if (session) {
+        push("/");
+      } else {
+        push("/login");
+      }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
 
   const value: any = {
