@@ -21,6 +21,7 @@ const CreateForm = () => {
     dayjs(new Date())
   );
   const [active, setActive] = useState<boolean>(false);
+  const [type, setType] = useState<EventType>(EventType.PRAYER_ALERT);
 
   const [loading, setLoading] = useState(false);
 
@@ -29,6 +30,7 @@ const CreateForm = () => {
       const body = {
         ...data,
         active,
+        type,
         // @ts-ignore
         active_date_time: new Date(active_date_time?.["$d"] as any),
       };
@@ -55,16 +57,18 @@ const CreateForm = () => {
           <FormControl>
             <div className="formSection">
               <p className="formTitle">Prayer Type</p>
-              <RadioGroup row {...register("type")}>
+              <RadioGroup row>
                 <FormControlLabel
                   value={EventType.PRAYER_ALERT}
                   control={<Radio />}
                   label="Prayer Alert"
+                  onClick={() => setType(EventType.PRAYER_ALERT)}
                 />
                 <FormControlLabel
                   value={EventType.DAILY}
                   control={<Radio />}
                   label="Daily Prayer"
+                  onClick={() => setType(EventType.DAILY)}
                 />
               </RadioGroup>
             </div>

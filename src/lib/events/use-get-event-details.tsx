@@ -27,7 +27,8 @@ const useGetEventDetails = (id: string) => {
     let { data, error } = await supabase
       .from("users")
       .select("*, checkin(checkin_time, checkout_time, event_id, events(type))")
-      .eq("checkin.event_id", id);
+      .eq("checkin.event_id", id)
+      .eq("role", "REGULAR");
 
     if (data) setData(data);
     if (error) setError(error);
