@@ -162,26 +162,18 @@ const EventCard: FC<EventCardProps> = ({
                 {statusText}
               </button>
             )}
-
-            {/* {!isAdmin && (
-              <span onClick={() => setAreDetailsVisible(!areDetailsVisible)}>
-                {areDetailsVisible ? (
-                  <KeyboardArrowUpIcon />
-                ) : (
-                  <KeyboardArrowDownIcon />
-                )}
-              </span>
-            )} */}
           </div>
         </div>
-        <div className="event-card-row">
-          <p className="event-card-text flex-1">
-            {moment(active_date_time).format("ddd Do, MMM yyyy")}
-          </p>
-          <p className=" event-card-textflex-1">
-            {moment(active_date_time).format("HH:MM a")}
-          </p>
-        </div>
+        {isAdmin && (
+          <div className="event-card-row">
+            <p className="event-card-text flex-1">
+              {moment(active_date_time).format("ddd Do, MMM yyyy")}
+            </p>
+            <p className=" event-card-textflex-1">
+              {moment(active_date_time).format("HH:MM a")}
+            </p>
+          </div>
+        )}
       </div>
 
       {areDetailsVisible && (
