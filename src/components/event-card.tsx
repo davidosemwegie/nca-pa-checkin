@@ -120,12 +120,12 @@ const EventCard: FC<EventCardProps> = ({
   const checkOut = async () => {
     await supabase
       .from("checkin")
-      .update([
+      .update(
         {
-          id: checkin[checkin.length - 1].id,
           checkout_time: new Date().toISOString(),
         },
-      ])
+      )
+      .eq('id', checkin[checkin.length - 1].id)
       .then(() => refetch());
   };
 
