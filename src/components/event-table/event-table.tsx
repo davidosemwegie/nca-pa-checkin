@@ -42,6 +42,7 @@ const EventTable: FC<EventTableProps> = ({ id }) => {
 
   useEffect(() => {
     setIsActive(activeEvents?.includes(id) || false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeEvents]);
 
   const isDailyEvent = dailyEvents?.includes(id || "");

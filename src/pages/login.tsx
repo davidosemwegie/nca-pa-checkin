@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { TextField } from "@mui/material";
+import { InputAdornment, TextField } from "@mui/material";
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 const LoginPage = () => {
   const supabase = useSupabaseClient();
@@ -13,6 +15,8 @@ const LoginPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [isForgotPasswordFormActive, setIsForgotPasswordFormActive] =
     useState(false);
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const signInWithEmail = async () => {
     setLoading(true);
@@ -70,7 +74,16 @@ const LoginPage = () => {
               onChange={(e) => setPassword(e.target.value)}
               value={password}
               placeholder="Password"
-              type="password"
+              type={showPassword ? "text" : "password"}
+              InputProps={{
+            endAdornment: (
+              <InputAdornment position="start" style={{cursor: 'pointer'}}>
+                {
+                  showPassword ? <VisibilityIcon onClick={() => setShowPassword(false)} /> : <VisibilityOffIcon onClick={() => setShowPassword(true)} />
+                }
+              </InputAdornment>
+            ),
+          }}
             />
           )}
 

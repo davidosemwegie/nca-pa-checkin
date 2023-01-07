@@ -36,6 +36,7 @@ const useGetEventDetails = (id: string) => {
   }
   useEffect(() => {
     getData(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function getDailyEvents() {

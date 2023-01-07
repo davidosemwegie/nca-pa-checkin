@@ -50,6 +50,7 @@ const useGetEvents = () => {
     } else {
       getData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin]);
 
   return {
