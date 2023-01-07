@@ -1,12 +1,18 @@
+import {InputAdornment} from "@mui/material";
 import TextField from "@mui/material/TextField";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+
 
 const PasswordResetPage = () => {
   const router = useRouter();
 
   const [password, setPassword] = React.useState<string>("");
+  const [confirmPassword, setcConfirmPassword] = React.useState<string>("");
+  const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
   const supabase = useSupabaseClient();
 
@@ -34,6 +40,12 @@ const PasswordResetPage = () => {
   }, []);
 
   const resetPassword = async () => {
+
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
     const { error } = await supabase.auth.updateUser({ password });
     if (error) {
       console.log(error);
@@ -54,6 +66,32 @@ const PasswordResetPage = () => {
             onChange={(e) => setPassword(e.target.value)}
             value={password}
             placeholder="New Password"
+            type={showPassword ? "text" : "password"}       
+            InputProps={{
+            endAdornment: (
+              <InputAdornment position="start" style={{cursor: 'pointer'}}>
+                {
+                  showPassword ? <VisibilityIcon onClick={() => setShowPassword(false)} /> : <VisibilityOffIcon onClick={() => setShowPassword(true)} />
+                }
+              </InputAdornment>
+            ),
+          }}
+          />
+          <TextField
+            id="outlined-basic"
+            onChange={(e) => setcConfirmPassword(e.target.value)}
+            value={confirmPassword}
+            placeholder="Confirm Password"
+            type={showPassword ? "text" : "password"}
+            InputProps={{
+            endAdornment: (
+              <InputAdornment position="start" style={{cursor: 'pointer'}}>
+                {
+                  showPassword ? <VisibilityIcon onClick={() => setShowPassword(false)} /> : <VisibilityOffIcon onClick={() => setShowPassword(true)} />
+                }
+              </InputAdornment>
+            ),
+          }}
           />
           <button onClick={resetPassword}>Reset Password</button>
         </div>

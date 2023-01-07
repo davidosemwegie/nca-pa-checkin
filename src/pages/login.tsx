@@ -30,7 +30,7 @@ const LoginPage = () => {
     setLoading(false);
 
     if (error) {
-      alert(error.message);
+      alert(`${error.message}. Your email or password is incorrect.`);
     } else {
       window.localStorage.setItem(
         "access_token",
