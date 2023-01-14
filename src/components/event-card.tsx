@@ -157,7 +157,7 @@ const EventCard: FC<EventCardProps> = ({
             ) : (
               <button
                 onClick={() => setAreDetailsVisible(!areDetailsVisible)}
-                className={`bg-gray-400 font-bold checkin-status`}
+                className={`${isCheckedIn ? 'bg-gray-400': 'bg-green-700'} font-bold checkin-status`}
               >
                 {statusText}
               </button>
