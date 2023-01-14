@@ -123,6 +123,7 @@ const LoginPage = () => {
               Forgot password ?
             </span>
           )}
+          <span className="text-sm">App Version: 1.0.0</span>
         </div>
       </div>
     </div>
