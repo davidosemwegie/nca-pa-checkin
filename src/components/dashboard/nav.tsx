@@ -1,13 +1,13 @@
 import React from "react";
 import { useRouter } from "next/router";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
-import { useGetUser } from "../../lib/events/use-get-user";
 import { Greeting } from "./greeting";
+import { useGetUserQuery } from "./queries/use-get-user-query";
 
 const Nav = () => {
   const { push, pathname } = useRouter();
   const session = useSupabaseClient();
-  const { isAdmin } = useGetUser();
+  const { isAdmin } = useGetUserQuery();
 
   const logout = () => {
     session.auth.signOut();

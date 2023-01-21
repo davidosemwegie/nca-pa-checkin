@@ -1,10 +1,10 @@
-import React, { useState } from "react";
-import { useGetUser } from "../../lib/events/use-get-user";
+import React from "react";
 // @ts-ignore
 import greetingTime from "greeting-time";
+import { useGetUserQuery } from "./queries/use-get-user-query";
 
 const Greeting = () => {
-  const { firstName } = useGetUser();
+  const { firstName } = useGetUserQuery();
   const greetingText = greetingTime(new Date());
 
   if (!firstName) return null;

@@ -4,6 +4,9 @@ import { AppProps } from "next/app";
 import { useState } from "react";
 import { SessionProvider } from "../contexts/session.provider";
 import "../styles/globals.css";
+import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
+
+const queryClient = new QueryClient()
 
 function MyApp({
   Component,
@@ -14,14 +17,16 @@ function MyApp({
   const [supabase] = useState(() => createBrowserSupabaseClient());
 
   return (
-    <SessionContextProvider
-      supabaseClient={supabase}
-      initialSession={pageProps.initialSession}
-    >
-      <SessionProvider>
-        <Component {...pageProps} />
-      </SessionProvider>
-    </SessionContextProvider>
+    <QueryClientProvider client={queryClient}>
+      <SessionContextProvider
+        supabaseClient={supabase}
+        initialSession={pageProps.initialSession}
+        >
+        <SessionProvider>
+          <Component {...pageProps} />
+        </SessionProvider>
+      </SessionContextProvider>
+      </QueryClientProvider>
   );
 }
 export default MyApp;

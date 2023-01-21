@@ -1,12 +1,11 @@
 import { useSession } from "@supabase/auth-helpers-react";
-import React, { useEffect } from "react";
-import { useGetEvents } from "../../lib/events/use-get-events";
+import React from "react";
 import { EventType } from "../../types";
 import { EventCard } from "../event-card";
-import { Nav } from "./nav";
+import { useShowEventListQuery } from "./queries/use-show-event-list-query";
 
 const Dashboard = () => {
-  const { data, loading, error, refetch } = useGetEvents();
+  const { data, error, isLoading: loading } = useShowEventListQuery()
   const session = useSession();
 
   if (loading) return <div>Loading...</div>;
@@ -20,24 +19,33 @@ const Dashboard = () => {
       </div>
     );
 
+  if (loading) return <div>Loading...</div>;
+
+  const prayerAlerts = data?.data?.filter((value) => value.type === EventType.PRAYER_ALERT)
+  const dailyPrayers = data?.data?.filter((value) => value.type === EventType.DAILY)
+
   return (
     <div className="dashboard-container my-4">
       <div className="mb-4">
-        <h1 className="text-2xl font-bold">Prayer Alerts</h1>
-        {data
-          ?.filter((value) => value.type === EventType.PRAYER_ALERT)
-          .map((item) => (
-            <EventCard key={item.id} refetch={refetch} {...item} />
-          ))}
+        {!!prayerAlerts && prayerAlerts.length > 0 &&
+          <>
+            <h1 className="text-2xl font-bold">Prayer Alerts</h1>
+            {prayerAlerts.map((item) => (
+              <EventCard key={item.id} {...item} />
+            ))}
+          </>
+        }
       </div>
 
       <div>
-        <h1 className="text-2xl font-bold">Daily Prayers</h1>
-        {data
-          ?.filter((value) => value.type === EventType.DAILY)
-          .map((item) => (
-            <EventCard key={item.id} refetch={refetch} {...item} />
-          ))}
+        {!!dailyPrayers && dailyPrayers.length > 0 &&
+          <>
+            <h1 className="text-2xl font-bold">Daily Prayers</h1>
+            {dailyPrayers.map((item) => (
+              <EventCard key={item.id} {...item} />
+            ))}
+          </>
+        }
       </div>
     </div>
   );

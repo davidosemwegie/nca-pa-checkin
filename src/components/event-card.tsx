@@ -1,25 +1,13 @@
 import React, { FC, useMemo, useState } from "react";
-import { UseGetInterfaceData } from "../lib/events/use-get-events";
-import { Event, EventType } from "../types";
+import { CHECKIN_STATUS, Event, EventType } from "../types";
 import moment from "moment";
-import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import { useRouter } from "next/router";
-import { useGetUser } from "../lib/events/use-get-user";
-import Switch from "react-switch";
+import { useCheckinMutation } from "./dashboard/queries/use-checkin-mutation";
+import { useCheckoutMutation } from "./dashboard/queries/use-checkout-mutation";
+import { useGetUserQuery } from "./dashboard/queries/use-get-user-query";
 
-enum CHECKIN_STATUS {
-  CHECKED_IN = "CHECKED_IN",
-  CHECKED_OUT = "CHECKED_OUT",
-  NOT_CHECKED_IN = "NOT_CHECKED_IN",
-}
 
-export interface EventCardProps extends UseGetInterfaceData {
-  refetch: () => void;
-}
-
-const EventCard: FC<EventCardProps> = ({
+const EventCard: FC<Event> = ({
   title,
   checkin,
   type,
@@ -27,12 +15,13 @@ const EventCard: FC<EventCardProps> = ({
   description,
   id,
   active,
-  refetch,
 }) => {
-  const supabase = useSupabaseClient();
-  const session = useSession();
   const { push } = useRouter();
-  const { isAdmin } = useGetUser();
+  const { isAdmin } = useGetUserQuery();
+  const { mutate: checkInMutation } = useCheckinMutation()
+  const { mutate: checkOutMutation } = useCheckoutMutation()
+
+
 
   const [areDetailsVisible, setAreDetailsVisible] = useState(false);
   const [checkinStatus, setCheckinStatus] = useState<any>(null);
@@ -81,53 +70,26 @@ const EventCard: FC<EventCardProps> = ({
     return "Not Checked in";
   }, [checkinTime, checkoutTime, isSameDay, type]);
 
-  const colorMap = {
-    [CHECKIN_STATUS.CHECKED_IN]: "bg-green-500",
-    [CHECKIN_STATUS.CHECKED_OUT]: "bg-red-500",
-    [CHECKIN_STATUS.NOT_CHECKED_IN]: "bg-gray-500",
-  };
-
   const isCheckedIn = checkinStatus !== CHECKIN_STATUS.NOT_CHECKED_IN;
   const isCheckedOut = checkinStatus === CHECKIN_STATUS.CHECKED_OUT;
 
-  const refetchEvent = async () => {
-    let { data, error } = await supabase
-      .from("events")
-      .select("*, checkin (id, checkin_time, checkout_time)")
-      .eq("checkin.user_id", session?.user.id)
-      .eq("id", id);
+  const checkIntoEvent = () => {
+    if (isCheckedIn) {
+      alert("You are already checked in")
+    } else {
+      checkInMutation(id)
+    }
+  }
 
-    if (error) alert(error.message);
 
-    // @ts-ignore
-    setEvent(data[data?.length - 1]);
-  };
+  const checkOutOfEvent = () => {
+    if (!isCheckedIn) {
+      alert("You are not checked in")
+    } else {
+      checkOutMutation(checkin[checkin.length - 1]?.id)
+    }
+  }
 
-  const checkIn = async () => {
-    //Check Into event
-    await supabase
-      .from("checkin")
-      .insert([
-        {
-          event_id: id,
-          user_id: session?.user.id,
-          checkin_time: new Date().toISOString(),
-        },
-      ])
-      .then(() => refetch());
-  };
-
-  const checkOut = async () => {
-    await supabase
-      .from("checkin")
-      .update(
-        {
-          checkout_time: new Date().toISOString(),
-        },
-      )
-      .eq('id', checkin[checkin.length - 1].id)
-      .then(() => refetch());
-  };
 
   return (
     <>
@@ -147,9 +109,8 @@ const EventCard: FC<EventCardProps> = ({
             {isAdmin ? (
               <div className="event-card-text flex">
                 <p
-                  className={`py-1 px-3 rounded-md font-semibold text-white ${
-                    active ? "bg-green-700" : "bg-red-700"
-                  }`}
+                  className={`py-1 px-3 rounded-md font-semibold text-white ${active ? "bg-green-700" : "bg-red-700"
+                    }`}
                 >
                   {active ? "Live" : "Not Live"}
                 </p>
@@ -157,7 +118,7 @@ const EventCard: FC<EventCardProps> = ({
             ) : (
               <button
                 onClick={() => setAreDetailsVisible(!areDetailsVisible)}
-                className={`${isCheckedIn ? 'bg-gray-400': 'bg-green-700'} font-bold checkin-status`}
+                className={`${isCheckedIn ? 'bg-gray-400' : 'bg-green-700'} font-bold checkin-status`}
               >
                 {statusText}
               </button>
@@ -186,22 +147,20 @@ const EventCard: FC<EventCardProps> = ({
           </div>
           <div className="event-action-button-container flex flex-col">
             <button
-              className={`event-action-button mb-4 ${
-                isCheckedIn ? "bg-gray-400" : "bg-green-700"
-              }`}
+              className={`event-action-button mb-4 ${isCheckedIn ? "bg-gray-400" : "bg-green-700"
+                }`}
               disabled={isCheckedIn}
-              onClick={checkIn}
+              onClick={checkIntoEvent}
             >
               Check In
             </button>
             <button
-              className={`event-action-button ${
-                checkinStatus === CHECKIN_STATUS.CHECKED_OUT
-                  ? "bg-gray-400"
-                  : "bg-red-700"
-              }`}
+              className={`event-action-button ${checkinStatus === CHECKIN_STATUS.CHECKED_OUT
+                ? "bg-gray-400"
+                : "bg-red-700"
+                }`}
               disabled={isCheckedOut}
-              onClick={checkOut}
+              onClick={checkOutOfEvent}
             >
               Check Out
             </button>

@@ -76,14 +76,14 @@ const LoginPage = () => {
               placeholder="Password"
               type={showPassword ? "text" : "password"}
               InputProps={{
-            endAdornment: (
-              <InputAdornment position="start" style={{cursor: 'pointer'}}>
-                {
-                  showPassword ? <VisibilityIcon onClick={() => setShowPassword(false)} /> : <VisibilityOffIcon onClick={() => setShowPassword(true)} />
-                }
-              </InputAdornment>
-            ),
-          }}
+                endAdornment: (
+                  <InputAdornment position="start" style={{ cursor: 'pointer' }}>
+                    {
+                      showPassword ? <VisibilityIcon onClick={() => setShowPassword(false)} /> : <VisibilityOffIcon onClick={() => setShowPassword(true)} />
+                    }
+                  </InputAdornment>
+                ),
+              }}
             />
           )}
 
@@ -123,7 +123,7 @@ const LoginPage = () => {
               Forgot password ?
             </span>
           )}
-          <span className="text-sm">App Version: 1.0.0</span>
+          <span className="text-sm">App Version: 1.2.0</span>
         </div>
       </div>
     </div>
