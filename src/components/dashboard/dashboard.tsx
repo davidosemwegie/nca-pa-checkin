@@ -24,6 +24,20 @@ const Dashboard = () => {
   const prayerAlerts = data?.data?.filter((value) => value.type === EventType.PRAYER_ALERT)
   const dailyPrayers = data?.data?.filter((value) => value.type === EventType.DAILY)
 
+
+  let dailyPrayerCheckins = []
+
+  dailyPrayers?.forEach(prayer => {
+    dailyPrayerCheckins.push(prayer.checkin)
+  })
+
+  dailyPrayers?.map(dailyPrayer => {
+    dailyPrayer?.checkin?.sort((a: any, b: any) => {
+      return new Date(a.checkin_time as any).getDate() - new Date(b.checkin_time as any).getDate()
+    })
+  })
+
+
   return (
     <div className="dashboard-container my-4">
       <div className="mb-4">
@@ -41,7 +55,7 @@ const Dashboard = () => {
         {!!dailyPrayers && dailyPrayers.length > 0 &&
           <>
             <h1 className="text-2xl font-bold">Daily Prayers</h1>
-            {dailyPrayers.map((item) => (
+            {dailyPrayers?.map((item) => (
               <EventCard key={item.id} {...item} />
             ))}
           </>

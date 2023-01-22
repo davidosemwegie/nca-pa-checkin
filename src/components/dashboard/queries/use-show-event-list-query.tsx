@@ -1,4 +1,5 @@
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useEffect } from "react";
 import { useQuery } from "react-query";
 import { useGetUserQuery } from "./use-get-user-query";
 
@@ -12,10 +13,10 @@ export const useShowEventListQuery = () => {
 
     const fetchNonAdminEventsList = async () => await supabase
         .from("events")
-        .select("*, checkin (id, checkin_time, checkout_time)")
+        .select("*, checkin (id, event_id, user_id, checkin_time, checkout_time)")
         .eq("checkin.user_id", session?.user.id)
         .eq("active", true)
-        .order("active_date_time", { ascending: false });
+        .order("active_date_time", { ascending: false })
 
     const fetchAdminEventList = async () => await supabase
         .from("events")
