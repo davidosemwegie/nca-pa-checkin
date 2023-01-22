@@ -5,6 +5,8 @@ import { useState } from "react";
 import { SessionProvider } from "../contexts/session.provider";
 import "../styles/globals.css";
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
+import { Analytics } from '@vercel/analytics/react';
+
 
 const queryClient = new QueryClient()
 
@@ -21,12 +23,13 @@ function MyApp({
       <SessionContextProvider
         supabaseClient={supabase}
         initialSession={pageProps.initialSession}
-        >
+      >
         <SessionProvider>
           <Component {...pageProps} />
+          <Analytics />
         </SessionProvider>
       </SessionContextProvider>
-      </QueryClientProvider>
+    </QueryClientProvider>
   );
 }
 export default MyApp;
