@@ -33,7 +33,7 @@ const Dashboard = () => {
 
   dailyPrayers?.map(dailyPrayer => {
     dailyPrayer?.checkin?.sort((a: any, b: any) => {
-      return new Date(a.checkin_time as any).getDate() - new Date(b.checkin_time as any).getDate()
+      return new Date(a?.checkin_time as any).getDate() - new Date(b?.checkin_time as any).getDate()
     })
   })
 
