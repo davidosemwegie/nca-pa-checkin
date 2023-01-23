@@ -24,20 +24,30 @@ const useGetEventDetails = (id: string) => {
 
   async function getData(id: string) {
     setLoading(true);
+
+    const filterDate = new Date().toISOString().split('T')[0] + 'T00:00:00.000Z'
+
+    console.log({filterDate});
+    
+
     let { data, error } = await supabase
       .from("users")
       .select("*, checkin(checkin_time, checkout_time, event_id, events(type))")
       .eq("checkin.event_id", id)
-      .eq("role", "REGULAR");
+      .eq("role", "REGULAR")
+      .gt('checkin.checkin_time',  filterDate)
 
     if (data) setData(data);
     if (error) setError(error);
     setLoading(false);
   }
+
   useEffect(() => {
     getData(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+
 
   async function getDailyEvents() {
     setLoading(true);

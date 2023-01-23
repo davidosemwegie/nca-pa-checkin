@@ -57,7 +57,6 @@ const EventTable: FC<EventTableProps> = ({ id }) => {
 
   if (loading) return <div>Loading...</div>;
 
-  if (error) return <div>Something went wrong</div>;
 
   return (
     <div>
@@ -96,15 +95,6 @@ const EventTable: FC<EventTableProps> = ({ id }) => {
           </div>
         )}
       </div>
-      {/* <pre>
-        {JSON.stringify(
-          {
-            activeEvents,
-          },
-          null,
-          2
-        )}
-      </pre> */}
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -121,26 +111,30 @@ const EventTable: FC<EventTableProps> = ({ id }) => {
             {data &&
               data.map((row) => {
                 //Filter out the checkin data that is not within the active date time
-                const filteredCheckinData = row?.checkin.filter((checkin) => {
-                  const hasCheckinDate = !!checkin?.checkin_time;
+                // UPDATE: This is not needed anymore because we are only showing the first checkin
+                // const filteredCheckinData = row?.checkin.filter((checkin) => {
+                //   const hasCheckinDate = !!checkin?.checkin_time;
 
-                  if (hasCheckinDate) {
-                    const checkinDate = formatDateForFilter(
-                      checkin?.checkin_time as string
-                    );
 
-                    // @ts-ignore
-                    const activeDate = formatDateForFilter(active_date_time);
+                //   if (hasCheckinDate) {
+                //     const checkinDate = formatDateForFilter(
+                //       checkin?.checkin_time as string
+                //     );
 
-                    return checkinDate === activeDate;
-                  }
+                //     // @ts-ignore
+                //     const activeDate = formatDateForFilter(active_date_time);
 
-                  return false;
-                })[0];
+                //     return checkinDate === activeDate;
+                //   }
 
-                const checkinData = isDailyEvent
-                  ? filteredCheckinData
-                  : row?.checkin[0];
+                //   return false;
+                // })[0];
+
+                const checkinData = row?.checkin[0]
+                
+                // const checkinData = isDailyEvent
+                //   ? filteredCheckinData
+                //   : row?.checkin[0];
 
                 const hasCheckinTime = checkinData?.checkin_time;
                 const hasCheckoutTime = checkinData?.checkout_time;
