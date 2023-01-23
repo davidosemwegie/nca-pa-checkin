@@ -11,7 +11,7 @@ export interface UseGetInterfaceData {
   checkin: Omit<Checkin, "id">[];
 }
 
-const useGetEventDetails = (id: string) => {
+const useGetEventDetails = (id: string, activeDate: Date) => {
   const supabase = useSupabaseClient();
   const [data, setData] = useState<UseGetInterfaceData[]>();
   const [error, setError] = useState<any>();
@@ -20,15 +20,11 @@ const useGetEventDetails = (id: string) => {
   const [eventName, setEventName] = useState<string>();
   const [activeEvents, setActiveEvents] = useState<string[]>();
 
-  const session = useSession();
 
-  async function getData(id: string) {
+  async function getData(id: string, activeDate: Date) {
     setLoading(true);
 
-    const filterDate = new Date().toISOString().split('T')[0] + 'T00:00:00.000Z'
-
-    console.log({filterDate});
-    
+    const filterDate = new Date(activeDate).toISOString().split('T')[0] + 'T00:00:00.000Z'
 
     let { data, error } = await supabase
       .from("users")
@@ -43,9 +39,9 @@ const useGetEventDetails = (id: string) => {
   }
 
   useEffect(() => {
-    getData(id);
+    getData(id, activeDate);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [activeDate]);
 
 
 

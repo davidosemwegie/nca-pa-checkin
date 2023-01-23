@@ -23,6 +23,9 @@ export interface EventTableProps {
 }
 
 const EventTable: FC<EventTableProps> = ({ id }) => {
+  const [active_date_time, setActiveDateTime] = useState<Dayjs | null>(
+    dayjs(new Date())
+  );
   const supabase = useSupabaseClient();
   const {
     data,
@@ -32,10 +35,8 @@ const EventTable: FC<EventTableProps> = ({ id }) => {
     dailyEvents,
     eventName,
     activeEvents,
-  } = useGetEventDetails(id);
-  const [active_date_time, setActiveDateTime] = useState<Dayjs | null>(
-    dayjs(new Date())
-  );
+  } = useGetEventDetails(id, active_date_time as unknown as Date);
+  
   const [isActive, setIsActive] = useState<boolean>(
     activeEvents?.includes(id) || false
   );
@@ -74,7 +75,7 @@ const EventTable: FC<EventTableProps> = ({ id }) => {
                   .from("events")
                   .update({ active: checked })
                   .eq("id", id)
-                  .then(() => refetch(id));
+                  .then(() => refetch(id, active_date_time as unknown as Date));
               }}
             />
           </div>
