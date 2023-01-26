@@ -23,8 +23,9 @@ const useGetEventDetails = (id: string, activeDate: Date) => {
 
   async function getData(id: string, activeDate: Date) {
     setLoading(true);
-
-    const filterDate = new Date(activeDate).toISOString().split('T')[0] + 'T00:00:00.000Z'
+    
+    const filterDate = new Date(`${activeDate} GMT`).toISOString().split('T')[0] + 'T00:00:00.000Z'
+    
 
     let { data, error } = await supabase
       .from("users")

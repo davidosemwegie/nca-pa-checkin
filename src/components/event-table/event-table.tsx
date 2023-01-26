@@ -23,8 +23,8 @@ export interface EventTableProps {
 }
 
 const EventTable: FC<EventTableProps> = ({ id }) => {
-  const [active_date_time, setActiveDateTime] = useState<Dayjs | null>(
-    dayjs(new Date())
+  const [active_date_time, setActiveDateTime] = useState(
+    dayjs().format('YYYY MM DD HH:mm:ss') 
   );
   const supabase = useSupabaseClient();
   const {
