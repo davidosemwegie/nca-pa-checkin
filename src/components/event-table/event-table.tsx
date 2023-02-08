@@ -52,10 +52,6 @@ const EventTable: FC<EventTableProps> = ({ id }) => {
     return moment(date).format("YYYY/MM/DD hh:mm:ss a");
   };
 
-  const formatDateForFilter = (date: string) => {
-    return moment(date).format("YYYY/MM/DD");
-  };
-
   if (loading) return <div>Loading...</div>;
 
 

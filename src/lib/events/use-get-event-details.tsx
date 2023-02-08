@@ -23,16 +23,17 @@ const useGetEventDetails = (id: string, activeDate: Date) => {
 
   async function getData(id: string, activeDate: Date) {
     setLoading(true);
-    
-    const filterDate = new Date(`${activeDate} GMT`).toISOString().split('T')[0] + 'T00:00:00.000Z'
-    
+
+    const filterDate = new Date(`${activeDate} GMT`).toISOString()
+    //.split('T')[0] + 'T00:00:00.000Z'
+
 
     let { data, error } = await supabase
       .from("users")
       .select("*, checkin(checkin_time, checkout_time, event_id, events(type))")
       .eq("checkin.event_id", id)
       .eq("role", "REGULAR")
-      .gt('checkin.checkin_time',  filterDate)
+      .gt('checkin.checkin_time', filterDate)
 
     if (data) setData(data);
     if (error) setError(error);
