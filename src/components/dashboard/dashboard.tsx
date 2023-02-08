@@ -24,13 +24,6 @@ const Dashboard = () => {
   const prayerAlerts = data?.data?.filter((value) => value.type === EventType.PRAYER_ALERT)
   const dailyPrayers = data?.data?.filter((value) => value.type === EventType.DAILY)
 
-
-  let dailyPrayerCheckins = []
-
-  dailyPrayers?.forEach(prayer => {
-    dailyPrayerCheckins.push(prayer.checkin)
-  })
-
   dailyPrayers?.map(dailyPrayer => {
     dailyPrayer?.checkin?.sort((a: any, b: any) => {
 

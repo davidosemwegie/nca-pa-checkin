@@ -24,7 +24,7 @@ export interface EventTableProps {
 
 const EventTable: FC<EventTableProps> = ({ id }) => {
   const [active_date_time, setActiveDateTime] = useState(
-    dayjs().format('YYYY MM DD HH:mm:ss') 
+    dayjs().format('YYYY MM DD HH:mm:ss')
   );
   const supabase = useSupabaseClient();
   const {
@@ -36,7 +36,7 @@ const EventTable: FC<EventTableProps> = ({ id }) => {
     eventName,
     activeEvents,
   } = useGetEventDetails(id, active_date_time as unknown as Date);
-  
+
   const [isActive, setIsActive] = useState<boolean>(
     activeEvents?.includes(id) || false
   );
@@ -49,7 +49,7 @@ const EventTable: FC<EventTableProps> = ({ id }) => {
   const isDailyEvent = dailyEvents?.includes(id || "");
 
   const formatDate = (date: string) => {
-    return moment(date).format("YYYY/MM/DD hh:mm:ss");
+    return moment(date).format("YYYY/MM/DD hh:mm:ss a");
   };
 
   const formatDateForFilter = (date: string) => {
@@ -132,7 +132,9 @@ const EventTable: FC<EventTableProps> = ({ id }) => {
                 // })[0];
 
                 const checkinData = row?.checkin[0]
-                
+
+                console.log({ name: row.first_name, checkinData })
+
                 // const checkinData = isDailyEvent
                 //   ? filteredCheckinData
                 //   : row?.checkin[0];
@@ -163,12 +165,12 @@ const EventTable: FC<EventTableProps> = ({ id }) => {
                     <TableCell align="right">
                       {hasCheckinTime && hasCheckoutTime
                         ? `${moment(checkinData?.checkout_time).diff(
-                            checkinData?.checkin_time,
-                            "minutes"
-                          )} minutes`
+                          checkinData?.checkin_time,
+                          "minutes"
+                        )} minutes`
                         : hasCheckinTime && !hasCheckoutTime
-                        ? "Not checked out yet"
-                        : "N/A"}
+                          ? "Not checked out yet"
+                          : "N/A"}
                     </TableCell>
                   </TableRow>
                 );
