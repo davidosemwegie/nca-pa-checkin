@@ -87,6 +87,7 @@ const EventTable: FC<EventTableProps> = ({ id }) => {
                   // @ts-ignore
                   setActiveDateTime(newValue?.["$d"]);
                 }}
+                disableFuture
               />
             </LocalizationProvider>
           </div>
@@ -128,8 +129,6 @@ const EventTable: FC<EventTableProps> = ({ id }) => {
                 // })[0];
 
                 const checkinData = row?.checkin[0]
-
-                console.log({ name: row.first_name, checkinData })
 
                 // const checkinData = isDailyEvent
                 //   ? filteredCheckinData
