@@ -13,14 +13,14 @@ export const useShowEventListQuery = () => {
 
     const fetchNonAdminEventsList = async () => await supabase
         .from("events")
-        .select("*, checkin (id, event_id, user_id, checkin_time, checkout_time)")
+        .select("*, checkin (id, event_id, user_id, checkin_time, checkout_time, session_type, is_makeup, effective_checkin_time, effective_checkout_time)")
         .eq("checkin.user_id", session?.user.id)
         .eq("active", true)
         .order("active_date_time", { ascending: false })
 
     const fetchAdminEventList = async () => await supabase
         .from("events")
-        .select("*, checkin (id, checkin_time, checkout_time)")
+        .select("*, checkin (id, checkin_time, checkout_time, session_type, is_makeup, effective_checkin_time, effective_checkout_time)")
         .eq("checkin.user_id", session?.user.id)
         .order("active_date_time", { ascending: false });
 
