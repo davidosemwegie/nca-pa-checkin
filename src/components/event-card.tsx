@@ -1,10 +1,16 @@
 import React, { FC, useMemo, useState } from "react";
-import { CHECKIN_STATUS, Event, EventType } from "../types";
+import { CHECKIN_STATUS, Event, EventType, PrayerSessionType } from "../types";
 import moment from "moment";
 import { useRouter } from "next/router";
 import { useCheckinMutation } from "./dashboard/queries/use-checkin-mutation";
 import { useCheckoutMutation } from "./dashboard/queries/use-checkout-mutation";
 import { useGetUserQuery } from "./dashboard/queries/use-get-user-query";
+import {
+  getCurrentPrayerSession,
+  getNextPrayerSession,
+  getPrayerSessionStatus,
+  PRAYER_SESSIONS,
+} from "../lib/prayer-session-utils";
 
 
 const EventCard: FC<Event> = ({
@@ -18,18 +24,34 @@ const EventCard: FC<Event> = ({
 }) => {
   const { push } = useRouter();
   const { isAdmin } = useGetUserQuery();
-  const { mutate: checkInMutation } = useCheckinMutation()
-  const { mutate: checkOutMutation } = useCheckoutMutation()
-
-
+  const { mutate: checkInMutation, isLoading: isCheckingIn } = useCheckinMutation();
+  const { mutate: checkOutMutation, isLoading: isCheckingOut } = useCheckoutMutation();
 
   const [areDetailsVisible, setAreDetailsVisible] = useState(false);
   const [checkinStatus, setCheckinStatus] = useState<any>(null);
 
+  const now = moment();
+  const currentSession = getCurrentPrayerSession(now);
+  const nextSession = getNextPrayerSession(now);
+  const sessionStatusMessage = getPrayerSessionStatus(now);
+
+  // Check if check-in is available based on prayer session times (for DAILY events)
+  const canCheckinNow = type === EventType.DAILY
+    ? currentSession?.canCheckin ?? false
+    : true; // Prayer alerts don't have time restrictions
+
   const today = moment(new Date()).format("YYYY/MM/DD");
   const checkinTime = checkin?.[checkin.length - 1]?.checkin_time;
   const checkoutTime = checkin?.[checkin.length - 1]?.checkout_time;
+  const lastCheckinSessionType = checkin?.[checkin.length - 1]?.session_type as PrayerSessionType | undefined;
   const isSameDay = today === moment(checkinTime).format("YYYY/MM/DD");
+
+  // For DAILY events, also check if the session type matches current session
+  const isSameSession = useMemo(() => {
+    if (type !== EventType.DAILY || !currentSession) return true;
+    if (!checkinTime) return false;
+    return lastCheckinSessionType === currentSession.sessionType;
+  }, [type, currentSession, checkinTime, lastCheckinSessionType]);
 
   const statusText = useMemo(() => {
     if (type === EventType.PRAYER_ALERT) {
@@ -46,7 +68,7 @@ const EventCard: FC<Event> = ({
 
     if (type === EventType.DAILY) {
       if (checkinTime && !checkoutTime) {
-        if (isSameDay) {
+        if (isSameDay && isSameSession) {
           setCheckinStatus(CHECKIN_STATUS.CHECKED_IN);
           return "Checked In";
         } else {
@@ -56,7 +78,7 @@ const EventCard: FC<Event> = ({
       }
 
       if (checkinTime && checkoutTime) {
-        if (isSameDay) {
+        if (isSameDay && isSameSession) {
           setCheckinStatus(CHECKIN_STATUS.CHECKED_OUT);
           return "Checked Out";
         } else {
@@ -68,27 +90,40 @@ const EventCard: FC<Event> = ({
 
     setCheckinStatus(CHECKIN_STATUS.NOT_CHECKED_IN);
     return "Not Checked in";
-  }, [checkinTime, checkoutTime, isSameDay, type]);
+  }, [checkinTime, checkoutTime, isSameDay, isSameSession, type]);
 
   const isCheckedIn = checkinStatus !== CHECKIN_STATUS.NOT_CHECKED_IN;
   const isCheckedOut = checkinStatus === CHECKIN_STATUS.CHECKED_OUT;
 
   const checkIntoEvent = () => {
     if (isCheckedIn) {
-      alert("You are already checked in")
+      alert("You are already checked in");
+    } else if (type === EventType.DAILY && !canCheckinNow) {
+      const amSession = PRAYER_SESSIONS.AM;
+      const pmSession = PRAYER_SESSIONS.PM;
+      alert(
+        `Check-in is only available during prayer sessions:\n` +
+        `Morning: ${amSession.startHour - 1}:${String(60 - amSession.earlyCheckinMinutes).padStart(2, '0')} AM - ${amSession.endHour}:00 AM\n` +
+        `Evening: ${pmSession.startHour - 12 - 1}:${String(60 - pmSession.earlyCheckinMinutes).padStart(2, '0')} PM - ${pmSession.endHour - 12}:00 PM`
+      );
     } else {
-      checkInMutation(id)
+      checkInMutation(id);
     }
-  }
+  };
 
 
   const checkOutOfEvent = () => {
     if (!isCheckedIn) {
-      alert("You are not checked in")
+      alert("You are not checked in");
     } else {
-      checkOutMutation(checkin[checkin.length - 1]?.id)
+      const lastCheckin = checkin[checkin.length - 1];
+      checkOutMutation({
+        id: lastCheckin?.id,
+        sessionType: lastCheckin?.session_type as PrayerSessionType | undefined,
+        checkinTime: lastCheckin?.checkin_time,
+      });
     }
-  }
+  };
 
 
   return (
@@ -144,25 +179,35 @@ const EventCard: FC<Event> = ({
               <p className="text-lg font-bold">Prayer Points / Description</p>
               <p>{description}</p>
             </span>
+            {/* Show prayer session status for DAILY events */}
+            {type === EventType.DAILY && !isAdmin && (
+              <div className="mt-4 p-3 bg-blue-50 rounded-md">
+                <p className="text-sm text-blue-800">{sessionStatusMessage}</p>
+              </div>
+            )}
           </div>
           <div className="event-action-button-container flex flex-col">
             <button
-              className={`event-action-button mb-4 ${isCheckedIn ? "bg-gray-400" : "bg-green-700"
-                }`}
-              disabled={isCheckedIn}
+              className={`event-action-button mb-4 ${
+                isCheckedIn || (type === EventType.DAILY && !canCheckinNow)
+                  ? "bg-gray-400"
+                  : "bg-green-700"
+              }`}
+              disabled={isCheckedIn || isCheckingIn || (type === EventType.DAILY && !canCheckinNow)}
               onClick={checkIntoEvent}
             >
-              Check In
+              {isCheckingIn ? "Checking In..." : "Check In"}
             </button>
             <button
-              className={`event-action-button ${checkinStatus === CHECKIN_STATUS.CHECKED_OUT
-                ? "bg-gray-400"
-                : "bg-red-700"
-                }`}
-              disabled={isCheckedOut}
+              className={`event-action-button ${
+                checkinStatus === CHECKIN_STATUS.CHECKED_OUT
+                  ? "bg-gray-400"
+                  : "bg-red-700"
+              }`}
+              disabled={isCheckedOut || isCheckingOut || !isCheckedIn}
               onClick={checkOutOfEvent}
             >
-              Check Out
+              {isCheckingOut ? "Checking Out..." : "Check Out"}
             </button>
           </div>
         </div>
